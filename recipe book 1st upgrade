@@ -1,0 +1,227 @@
+package testjavafx;
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+
+public class MyJavaFX extends Application {
+
+    private int attemptCounter = 0;
+    private ToggleGroup genderGroup = new ToggleGroup();
+
+    public void start(Stage primaryStage) {
+
+        // Sign In Stage
+        Stage signInStage = new Stage();
+        signInStage.setTitle("Sign In");
+
+        // Sign Up Stage
+        Stage signUpStage = new Stage();
+        signUpStage.setTitle("Sign Up");
+
+        Stage mainStage = new Stage();
+        mainStage.setTitle("Main Stage");
+
+        // Sign In Elements
+        Label signInLabel = new Label("Sign In Page");
+        Button goToSignUpButton = new Button("Sign Up?");
+
+        // Sign in Elements
+        Label usernameLabel_2 = new Label("Username:");
+        Label passwordLabel_2 = new Label("Password:");
+        TextField usernameField_2 = new TextField();
+        PasswordField passwordField_2 = new PasswordField();
+        Button signInButton = new Button("Sign In");
+
+        // Sign Up Elements
+        Label usernameLabel = new Label("Username:");
+        Label IdLabel = new Label("ID:");
+        Label passwordLabel = new Label("Password:");
+        Label confirmpasswordLabel = new Label("Confirm Password:");
+        Label genderchoice = new Label("Gender:");
+        
+        TextField usernameField = new TextField();
+        TextField IdField = new TextField();
+        PasswordField passwordField = new PasswordField();
+        PasswordField confirmpasswordField = new PasswordField();
+        
+        RadioButton male = new RadioButton("Male");
+        RadioButton female = new RadioButton("Female");
+        male.setToggleGroup(genderGroup);
+        female.setToggleGroup(genderGroup);
+        Button signUpButton = new Button("Sign Up");
+
+        // Sign In Action
+        goToSignUpButton.setOnAction(e -> {
+            signUpStage.show();
+            signInStage.close();
+        });
+
+        signInButton.setOnAction(e -> {
+            if (validateSignInFields(usernameField_2.getText(), passwordField_2.getText())) {
+                mainStage.show();
+                signInStage.close();
+            }
+        });
+
+        // Sign Up Action
+        signUpButton.setOnAction(e -> {
+            if (validateSignUpFields(usernameField.getText(), IdField.getText(), passwordField.getText(), confirmpasswordField.getText())) {
+                handleSignUp(usernameField.getText(), IdField.getText(), passwordField.getText(), confirmpasswordField.getText(), male.isSelected());
+                mainStage.show();
+                signUpStage.close();
+            }
+        });
+
+        // Styling
+        usernameLabel.setStyle("-fx-font-size: 14px;");
+        IdLabel.setStyle("-fx-font-size: 14px;");
+        passwordLabel.setStyle("-fx-font-size: 14px;");
+        confirmpasswordLabel.setStyle("-fx-font-size: 14px;");
+        genderchoice.setStyle("-fx-font-size: 14px;");
+        signUpButton.setStyle("-fx-font-size: 14px; -fx-background-color: red; -fx-text-fill: white;");
+        male.setStyle("-fx-text-fill: red;");
+        female.setStyle("-fx-text-fill: red;");
+        usernameLabel_2.setStyle("-fx-font-size: 14px;");
+        passwordLabel_2.setStyle("-fx-font-size: 14px;");
+        signInButton.setStyle("-fx-font-size: 14px; -fx-background-color: red; -fx-text-fill: white;");
+        goToSignUpButton.setStyle("-fx-font-size: 14px; -fx-background-color: red; -fx-text-fill: white;");
+
+        GridPane gridPane2 = new GridPane();
+        gridPane2.setPadding(new Insets(20));
+        gridPane2.setVgap(10);
+        gridPane2.setHgap(5);
+        gridPane2.setAlignment(Pos.CENTER);
+
+        // Sign Up Grid
+        gridPane2.add(usernameLabel, 0, 0);
+        gridPane2.add(usernameField, 1, 0);
+        gridPane2.add(IdLabel, 0, 1);
+        gridPane2.add(IdField, 1, 1);
+        gridPane2.add(genderchoice, 0, 2);
+        HBox genderBox = new HBox(10, male, female);
+        gridPane2.add(genderBox, 1, 2);
+        gridPane2.add(passwordLabel, 0, 3);
+        gridPane2.add(passwordField, 1, 3);
+        gridPane2.add(confirmpasswordLabel, 0, 4);
+        gridPane2.add(confirmpasswordField, 1, 4);
+        gridPane2.add(signUpButton, 1, 5);
+
+        // Sign in Grid
+        GridPane gridPane1 = new GridPane();
+        gridPane1.setPadding(new Insets(20));
+        gridPane1.setVgap(10);
+        gridPane1.setHgap(5);
+        gridPane1.setAlignment(Pos.CENTER);
+
+        gridPane1.add(usernameLabel_2, 0, 0);
+        gridPane1.add(usernameField_2, 1, 0);
+        gridPane1.add(passwordLabel_2, 0, 1);
+        gridPane1.add(passwordField_2, 1, 1);
+
+        gridPane1.add(goToSignUpButton, 1, 2);
+        gridPane1.add(signInButton, 0, 2);
+
+        Scene signUpScene = new Scene(gridPane2, 400, 300);
+        signUpStage.setScene(signUpScene);
+
+        Scene signInScene = new Scene(gridPane1, 400, 300);
+        signInStage.setScene(signInScene);
+
+        // Main Stage Elements
+        Label foodTypesLabel = new Label("Cuisine Types:");
+        ComboBox<String> foodTypesComboBox = new ComboBox<>();
+        foodTypesComboBox.getItems().addAll("Lebanese", "Asian", "American", "Indian", "French");
+        foodTypesComboBox.getSelectionModel().selectFirst();
+
+        Label searchLabel = new Label("Search:");
+        TextField searchField = new TextField();
+        Button searchButton = new Button("Search");
+
+        searchButton.setOnAction(e -> handleSearch(searchField.getText()));
+
+        foodTypesLabel.setStyle("-fx-font-size: 14px;");
+        foodTypesComboBox.setStyle("-fx-font-size: 14px;");
+        searchLabel.setStyle("-fx-font-size: 14px;");
+        searchField.setPrefWidth(200);
+        searchButton.setStyle("-fx-font-size: 14px; -fx-background-color: red; -fx-text-fill: white;");
+
+        HBox foodAndSearchBox = new HBox(10, foodTypesLabel, foodTypesComboBox, searchLabel, searchField, searchButton);
+        foodAndSearchBox.setAlignment(Pos.CENTER);
+        foodAndSearchBox.setPadding(new Insets(20));
+
+        BorderPane mainLayout = new BorderPane();
+        mainLayout.setTop(foodAndSearchBox);
+
+        Scene mainScene = new Scene(mainLayout, 700, 600);
+        mainStage.setScene(mainScene);
+
+        // Show Sign In Stage
+        signInStage.show();
+    }
+
+    private void handleSignUp(String username, String id, String password, String confirmPassword, boolean isMale) {
+        if (!password.equals(confirmPassword)) {
+            attemptCounter++;
+            if (attemptCounter == 3) {
+                showAlert("Final attempt. Closing application.");
+                System.exit(0);
+            } else {
+                showAlert("Passwords do not match. Attempt #" + attemptCounter);
+            }
+        } else {
+            // Perform actual sign-up logic here
+            System.out.println("Username: " + username);
+            System.out.println("ID: " + id);
+            System.out.println("Password: " + password);
+            System.out.println("Confirm Password: " + confirmPassword);
+            System.out.println("Gender: " + (isMale ? "Male" : "Female"));
+        }
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void handleSearch(String query) {
+        // Implement your search logic here
+        System.out.println("Performing search for: " + query);
+        // You can display search results or take appropriate action based on the search query
+    }
+
+    private boolean validateSignUpFields(String username, String id, String password, String confirmPassword) {
+        if (username.isEmpty() || id.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            showAlert("Please fill in all the required fields.");
+            return false;
+        }
+        if (!password.equals(confirmPassword)) {
+            showAlert("Passwords do not match.");
+            return false;
+        }
+        if (genderGroup.getSelectedToggle() == null) {
+            showAlert("Please select a gender.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateSignInFields(String username, String password) {
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert("Please fill in all the required fields.");
+            return false;
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
